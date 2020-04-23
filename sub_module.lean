@@ -36,13 +36,15 @@ lemma coersion (x : p) :   ((res stab g x) : M) = (ρ g : M ≃ₗ[R] M) (x : M)
 
 lemma res_add (g : G) (x y : p) : res stab g (x+y) = res stab g x + res stab g y := begin
     apply submodule_ext, 
-    rw [coersion,submodule.coe_add,  (ρ g).map_add], 
+    rw [submodule.coe_add], rw coersion, erw linear_equiv.map_add, 
     exact  rfl, 
 end 
 
 lemma res_smul (g : G) (r : R) ( x : p) : res stab g ( r • x) = r • res stab g x := begin 
     apply submodule_ext, 
-    rw [coersion, submodule.coe_smul, group_representation.rsmul], exact rfl,
+    rw [coersion,  submodule.coe_smul],
+    rw linear_equiv.map_smul (ρ g), exact rfl,
+    -- group_representation.rsmul], exact rfl,
 end
 /--
    `res` is linear map.  
@@ -121,4 +123,3 @@ def res.subtype (stab : stable_submodule ρ p) : Res stab ⟶ ρ  := {
     commute := by {intros g, exact rfl}
 }
 end stability
-#lint

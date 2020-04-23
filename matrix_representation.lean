@@ -10,22 +10,26 @@ variables {n : Type u} [fintype n] [decidable_eq n]
 variables (ρ : group_representation G R (n → R)) 
 def to_matrix' (ρ : group_representation G R (n → R))(g : G) :  matrix n n R :=  to_matrix (ρ g : (n → R) →ₗ[R] (n→ R)) 
 namespace tools
+
+/- 
+     Technical 
+-/
 lemma proof_strategy (A B : matrix n n R) : to_lin A = to_lin B → A = B := begin 
      intro hyp,
      have RR : to_matrix (to_lin A) = to_matrix (to_lin B),
           congr',
      iterate 2 {rw  to_lin_to_matrix  at RR},
-     exact RR,
+     exact RR,   
 end
 notation `mat` := to_matrix'
 
-lemma coersion₇ (g1 g2 : G) : (↑(ρ g1 * ρ g2) : (n → R) →ₗ[R] (n→ R)) = (ρ g1 :  (n → R) →ₗ[R] (n→ R) ) ⊚  ρ g2  := rfl
+lemma coersion₇ (g1 g2 : G) : (↑(ρ g1 * ρ g2) : (n → R) →ₗ[R] (n→ R)) = (ρ g1 :  (n → R) →ₗ[R] (n→ R) ) *  ρ g2  := rfl
 
 lemma  mat_mul' (g1 g2 : G) : 
 to_matrix (ρ (g1 * g2) : (n → R) →ₗ[R] (n→ R) ) = 
 to_matrix (ρ g1 : (n → R) →ₗ[R] (n→ R)) *  to_matrix (ρ g2) := begin 
     rw ρ.map_mul, rw  coersion₇, apply proof_strategy, rw mul_eq_mul,
-     rw mul_to_lin, rw to_matrix_to_lin, rw to_matrix_to_lin, rw to_matrix_to_lin,
+     rw mul_to_lin, rw to_matrix_to_lin, rw to_matrix_to_lin, rw to_matrix_to_lin, exact rfl,
 end 
 end tools
 open tools 
@@ -56,7 +60,7 @@ lemma to_matrix_one : to_matrix (↑(ρ 1 ) : (n → R) →ₗ[R] (n→ R) ) = 1
      rw ρ.map_one,
      apply proof_strategy,
      rw to_matrix_to_lin,
-     rw to_lin_one, exact rfl,
+     rw to_lin_one, exact rfl,   --- there is not this function in mathlib 
 end
 lemma mat_one : mat ρ 1 = 1 := to_matrix_one ρ 
 lemma mat_mul_inv_self (g : G) : mat ρ g * mat ρ g⁻¹ = 1 := begin rw ← mat_mul,rw mul_inv_self, rw mat_one, end
@@ -69,7 +73,8 @@ variables (G :Type u) (R : Type v) [group G] [comm_ring R]
 def central_function  (f : G → R) :=  ∀ s t : G, f (s * t) = f (t * s)
 lemma central (f : G → R)[hyp : central_function G R f] (s t : G) :  f (s * t) = f (t * s) := hyp s t 
 
-theorem central_function_are_constant_on_conujugacy_classses (f : G → R)[hyp : central_function G R f] : ∀ s t : G, f (t⁻¹ * s * t) =  f s :=
+theorem central_function_are_constant_on_conujugacy_classses (f : G → R)[hyp : central_function G R f] 
+               : ∀ s t : G, f (t⁻¹ * s * t) =  f s :=
 begin 
     intros s t, rw hyp,rw ← mul_assoc, rw mul_inv_self, rw one_mul,
 end
