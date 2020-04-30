@@ -48,10 +48,6 @@ variables (hyp : Irreductible ρ2 )
     We have no assumption of field just a ring (`NOT` only commutative). `NOT` dimension. 
 -/
 
-
-
-
-
 theorem Schur₁  (hyp1 : Irreductible ρ1)(hyp2 : Irreductible ρ2) : (∃ x : M1, (f.ℓ  x ≠ 0)) →  
 (ker f.ℓ  = ⊥ ) ∧  range f.ℓ  = ⊤ := 
 begin
@@ -78,15 +74,20 @@ open Irreductible morphism.from_irreductible
 open_locale classical
 variables {G : Type u} [group G] {R : Type v}[comm_ring R]{M : Type w}[add_comm_group M] [module R M]
 variables  {ρ : group_representation G R M}
-theorem Schur₂(f : ρ ⟶ ρ) [re : Irreductible ρ] : (∃ r : R, ∃ m0 : M, m0 ≠ 0 ∧  f.ℓ m0 + r • m0 = 0) → (∃ r : R, ∀ m : M, f.ℓ m + r • m = 0) := begin 
-    intro hyp,
-    rcases hyp with ⟨r,m0,⟨spec,spectral⟩⟩,
+theorem Schur₂(f : ρ ⟶ ρ) [re : Irreductible ρ] : 
+        (∃ r : R, ∃ m0 : M, m0 ≠ 0 ∧  f.ℓ m0 + r • m0 = 0) → (∃ r : R, ∀ m : M, f.ℓ m + r • m = 0) := 
+begin 
+    --intro hyp,
+    rintros ⟨r,m0,⟨spec,spectral⟩⟩,
     use r,
+    -- We proof  g = f + r id =0. The idea is ker g is stable, so equal to {0} or M. But m0 ∈ Ker f and m0 ≠ 0 so Ker f = M 
     let g :=  f + r • 𝟙 ρ,
+    -- first step g.ℓ m0 = 0
     have  certif_m0_in_ker : g.ℓ  m0 = 0,
         erw [add_ext,
          smul_ext, one_ext],
         exact spectral,
+    
     let schur := (Schur₁ g) ( by assumption  ) (by assumption), -- swap, exact re   
     by_contra,                  -- re doesnt work 
     push_neg at a,

@@ -37,16 +37,16 @@ instance : has_coe_to_fun (morphism ρ ρ') := ⟨_,λ f, f.ℓ.to_fun⟩
 lemma coersion (f : ρ ⟶ ρ') : ⇑f = (f.ℓ) := rfl
 
 theorem commute_apply ( f : ρ ⟶  ρ') (x : M) (g : G) : f ( ρ g x) = ρ' g (f x ) := begin 
-      change (f.ℓ  ∘ ρ g ) x = _,
-      rw f.commute, exact rfl,
+
+      erw ←  function.comp_apply f,
+      erw f.commute,
+      exact rfl,
   end
-theorem 𝒞_o_e_r_s_i_o_n__s__ℓ( f : ρ ⟶  ρ')(g : G) : f.ℓ ∘ ρ g =  ((linear_map.comp (f.ℓ) ((ρ g): M →ₗ[R]M  ) : M → M')) := rfl
+
 
 def one (ρ : group_representation G R M) : ρ ⟶ ρ := 
 { ℓ         := linear_map.id,
   commute   := λ g, rfl
 }
-
 notation `𝟙` := one
 end morphism
-

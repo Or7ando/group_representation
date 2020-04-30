@@ -1,0 +1,27 @@
+Plan pour la preuve de Serre page 18. 
+
+
+Soit \rho une représentation : \rho : G \to GL V. 
+
+Soit W un sous espace stable pour \rho. 
+
+1. Nous supposons l'existence d'un projecteur p associé à W : range p = W. 
+2. On va prouver qu'il existe un projecteur associé à W invariant pour \rho.
+    i.e formation de p0 : \rho \hom \rho tel que Im p0 = \rho / W. 
+
+IL nous faut organisation. 
+
+Lemme sur les projecteurs. 
+
+A /  Hyp : f : M \to M.  range f \sub W et \forall x \in W, p x = x alors p est un projecteur
+     et range  = W 
+B / Nous allons appliquer ceci à P0 = 1/g \sum conjugaison \rho g p. 
+
+1. Lemma :  \phi : X \to (M \to M) (X fini). 
+    hyp : \forall x, \range \phi x \sub W 
+    alors range sum \phi  \sub W. 
+
+2.  lemma : sum_apply 
+3.  lemma : si \phi : X \to M, \exi y s.t forall x \phi x = y, alors moyenne = y. 
+ 
+

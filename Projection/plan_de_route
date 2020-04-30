@@ -1,0 +1,11 @@
+Le plan est le suivant : 
+    1. Definir la notion de projecteur : un endomorphisme p² = p. 
+    2. Ce qui permet de parler de somme direct. 
+        a. un espace W possède un supplementaire lorsqu'il existe un projector parler
+            tel que range p = W 
+        b. ON en déduit que l'on dispose d'un projecteur associé 1-p et d'une écriture 
+                x = p x + (1-p) x avec px range p et (1-p)x in range 1-p 
+                cette écriture est unique. 
+    3. Pour une representation G \to GL M. 
+        Pour une sous-representation W de M. ON suppose que  W possede un projecteur 
+            alors on forme 1-p et sa moyenne qui est un projecteur avec   

@@ -8,7 +8,7 @@ namespace character
 variables {G : Type u} {R : Type v} [group G] [comm_ring R] 
 variables {n : Type u} [fintype n] [decidable_eq n] 
 variables (ρ : group_representation G R (n → R)) 
-def to_matrix' (ρ : group_representation G R (n → R))(g : G) :  matrix n n R :=  to_matrix (ρ g : (n → R) →ₗ[R] (n→ R)) 
+def to_matrix' (ρ : group_representation G R (n → R))(g : G) : matrix n n R :=  to_matrix (ρ g : (n → R) →ₗ[R] (n→ R)) 
 namespace tools
 
 /- 

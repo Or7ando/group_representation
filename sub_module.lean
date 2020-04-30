@@ -35,16 +35,13 @@ lemma coersion (x : p) :   ((res stab g x) : M) = (ρ g : M ≃ₗ[R] M) (x : M)
 
 
 lemma res_add (g : G) (x y : p) : res stab g (x+y) = res stab g x + res stab g y := begin
-    apply submodule_ext, 
-    rw [submodule.coe_add], rw coersion, erw linear_equiv.map_add, 
-    exact  rfl, 
+    apply submodule_ext, change ρ _ _ = _, 
+    erw (ρ g).map_add, 
+    exact rfl,
 end 
 
 lemma res_smul (g : G) (r : R) ( x : p) : res stab g ( r • x) = r • res stab g x := begin 
-    apply submodule_ext, 
-    rw [coersion,  submodule.coe_smul],
-    rw linear_equiv.map_smul (ρ g), exact rfl,
-    -- group_representation.rsmul], exact rfl,
+    apply submodule_ext, change ρ _ _ = _, erw (ρ g).map_smul, exact rfl,
 end
 /--
    `res` is linear map.  
@@ -75,14 +72,17 @@ def  res_equiv (h : stable_submodule ρ p) (g : G) :  (p ≃ p) :=
 { to_fun := (res  h g),
   inv_fun := (res  h g⁻¹),
   left_inv := begin  
-               intros x, apply submodule_ext,  
-                rw [← function.comp_apply  (res h g⁻¹), ←  res_mul,inv_mul_self,
-                    res_one],  exact rfl,
+              intros x, apply submodule_ext,
+              change (ρ _   *  _) x = _, rw ← ρ.map_mul,
+                rw [inv_mul_self,
+                    ρ.map_one ],  exact rfl,
                end
   , right_inv := begin 
                intros x,
-               apply submodule_ext,  rw ← function.comp_apply (res h g), rw ← res_mul,
-               rw mul_inv_self, rw res_one, exact rfl,
+               apply submodule_ext,
+               change (ρ g * _) x = _,
+               rw ←  ρ.map_mul,
+               rw mul_inv_self, rw ρ.map_one, exact rfl,
   end }
 /--
     We make `G → p ≃ₗ[R]p` 
@@ -101,14 +101,14 @@ lemma res_equiv_coersion (stab : stable_submodule ρ p) (g : G)(x : p) :
 def Res (stab : stable_submodule ρ p) : group_representation G R p := {
    to_fun := res_equiv_linear stab,
   map_one' := begin 
-                ext,
-                rw res_equiv_coersion, rw res_one, exact rfl,
+                ext,apply submodule_ext, change (ρ 1) x = _,  rw ρ.map_one, 
+                exact rfl,
                 end, 
 
   map_mul' := begin intros g1 g2, 
-                    ext, rw res_equiv_coersion, 
-                    rw res_mul,
-                     exact rfl, 
+                    ext, apply submodule_ext,
+                    change  (ρ (g1 *  g2))  x = _ ,  rw  ρ.map_mul, 
+                    exact rfl,
               end}
 /-
   i have to study more the notion 
