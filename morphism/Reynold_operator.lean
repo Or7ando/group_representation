@@ -64,12 +64,15 @@ theorem mixte_conj_mul_left (f : M→ₗ[R]M') (g : G)(s : G):
     erw mul_inv_rev, rw inv_inv, rw π.map_mul, rw ρ.map_mul,
     erw linear_map.comp_assoc ↑(ρ g),  rw ← coersion ρ s g,
     rw mul_assoc, rw ← ρ.map_mul , rw inv_mul_self, rw ρ.map_one, rw mul_one, exact rfl, 
- end
+end
 theorem mixte_conj_mul_left_fun (f : M→ₗ[R]M') (g : G) : 
         (λ s : G, ↑(π g) * (mixte_conj ρ π f s)) = (λ s, (mixte_conj ρ π f (s * g⁻¹)) * ↑(ρ g )) :=
 begin 
     ext,rw mixte_conj_mul_left,
 end
+--- TO DO : i have to study more the operator. 
+---   For the organisation : perhaps just give the definition here and 
+---   To the work in other file ? 
 /--
     The operator `ℒ`  
 -/
@@ -102,7 +105,7 @@ def ℛ : (M→ₗ[R]M') → (ρ ⟶  π) := λ f, { ℓ := ℒ ρ π f,
         erw ← theo, exact rfl, 
    end }
 lemma reynold_ext(f : M →ₗ[R]M' ) : (ℛ ρ π f).ℓ = finset.sum finset.univ (mixte_conj ρ π f) := rfl  
-#check ℛ ρ
+#check ℛ ρ ρ 
 end Reynold
 namespace more_on_mixte_conj
 open Reynold 

@@ -8,6 +8,7 @@ open finset
 open equiv function fintype finset
 universes u v w
 namespace technical 
+notation `Σ` := finset.sum finset.univ 
 variables {α : Type u} {β : Type v}
 lemma finset.prod_univ_perm [fintype α] [comm_monoid β] {f : α → β} (σ : perm α) :
   (univ : finset α).prod f = univ.prod (λ z, f (σ z)) :=
@@ -25,17 +26,20 @@ lemma Sum_permutation  {R :Type u}[add_comm_monoid R]{X : Type v}[fintype X](g :
 lemma Sum_add {R : Type} [ring R]{X : Type}[fintype X] (g : X → R)(h : X → R)  :  Σ  (h+g) = Σ  h + Σ  g  := begin
     exact multiset.sum_map_add,  --- 
 end
+#check multiset.sum_map_sum_map
 
-
-lemma Sum.left_mul {R : Type} [ring  R]{X : Type}[fintype X] (g : X → R)  :  Sum  ( g) = Sum  g  := begin
-    erw multiset.sum_map_mul_left,
+lemma Sum.left_mul {R : Type} [ring  R]{X : Type}[fintype X] (g : X → R)  (r : R):  Σ (r •  g) = r • Σ g  := begin
+    exact multiset.sum_map_mul_left,
 end
 
 
-lemma Sum.left_right {R : Type} [add_comm_monoid R]{X : Type}[fintype X] (g : X → R)(r : R) :  Σ  (r •   g ) =  (Σ  g) * r  := begin
+lemma Sum.left_right {R : Type} [add_comm_monoid R]{X : Type}[fintype X] (g : X → R)(r : R) :  Σ  (r •   g ) =  (Σ  g)   := begin
     rw mul_comm, exact Sum.left_mul g r,
 end
-
+lemma Sum.morp {R : Type} [add_comm_monoid R] (R' : Type) [add_comm_monoid R']
+{X : Type}[fintype X] (g : X → R) (φ : R →+ R') : φ ( Σ   g ) =  Σ (λ t, φ  ( g t) )    := begin
+    exact add_monoid_hom.map_sum φ g univ,
+end
 
 def Sum' (R : Type)[hyp1 : comm_ring R](X :Type)[hyp2 : fintype X] : (X → R) →ₗ[R] R := { to_fun := λ g, Σ g,
   add := begin intros, rw Sum_add,end,

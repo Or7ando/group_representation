@@ -16,9 +16,7 @@ variables {M : Type w}  [add_comm_group M] [module R M]
 -/
 structure morphism  (ρ : group_representation G R M) (π : group_representation G R M') : Type (max w w') := 
   (ℓ : M →ₗ[R] M')
-  (commute : ∀(g : G), ℓ ∘   ρ g  = π g  ∘   ℓ) --- en terme d'élément ! 
-
-variables (ρ : group_representation G R M)
+  (commute : ∀(g : G), ℓ ∘   ρ g  = π g  ∘   ℓ) 
 
 infixr ` ⟶ `:25 := morphism 
 
@@ -29,19 +27,19 @@ begin
     intros, 
     cases f,cases g , congr'; try {assumption},
 end
-
+variables (ρ : group_representation G R M)
 variables  (ρ'  : group_representation G R M') 
 
 instance : has_coe_to_fun (morphism ρ ρ') := ⟨_,λ f, f.ℓ.to_fun⟩  
 
 lemma coersion (f : ρ ⟶ ρ') : ⇑f = (f.ℓ) := rfl
 
-theorem commute_apply ( f : ρ ⟶  ρ') (x : M) (g : G) : f ( ρ g x) = ρ' g (f x ) := begin 
-
+theorem commute_apply ( f : ρ ⟶  ρ') (x : M) (g : G) : f ( ρ g x) = ρ' g (f x ) := 
+begin 
       erw ←  function.comp_apply f,
       erw f.commute,
       exact rfl,
-  end
+end
 
 
 def one (ρ : group_representation G R M) : ρ ⟶ ρ := 

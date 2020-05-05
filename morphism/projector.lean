@@ -4,12 +4,9 @@ import homothetic
 import Projection.test_linear_algebra
 open Reynold
 universes  u v w w'
-#eval 1+5  
-#check ℛ 
 variables {G : Type u} [group G][fintype G] {R : Type v}[comm_ring R]  
 variables  {M : Type w}[add_comm_group M] [module R M]  ( ρ : group_representation G R M) 
 (W : submodule  R M)(hyp : stability.stable_submodule ρ  W)
-#check ℛ ρ 
 lemma fact_minus_one (p : M→ₗ[R]M )(hyp : is_projector p)(x : M) : p (p x) = p x := 
 begin
      change (has_mul.mul p  p) x = p x,
@@ -51,28 +48,19 @@ submodule.map (ρ g⁻¹  : M →ₗ[R]M ) (linear_map.range p) := begin
 end
 lemma range_grall(hyp : stability.stable_submodule ρ  W) ( g : G) : submodule.map (ρ g : M →ₗ[R] M) W = W  := begin 
     apply le_antisymm,
-    rw submodule.le_def' ,
-    intros x, intro hyp',  rw submodule.mem_map at hyp', rcases hyp', rw ← hyp'_h.2,
-    unfold stability.stable_submodule at hyp,
-    let F :=  (hyp g),
-    change ((ρ g) hyp'_w) ∈ W,
-    exact (F ⟨ hyp'_w,hyp'_h.1⟩ ),
-    rw submodule.le_def' ,
-    intros x,  intro certifa, rw submodule.mem_map, 
-    use (ρ g⁻¹ ) x,
-    split,swap, 
-    change (ρ g)( (ρ g⁻¹ ) x) = x,
-    rw fact0,
-    unfold stability.stable_submodule at hyp,
-    let F :=  (hyp g⁻¹ ),
-    exact F ⟨x,certifa⟩, 
+        {rw submodule.le_def' ,intros x, intro hyp',  rcases hyp', rw ← hyp'_h.2,
+            unfold stability.stable_submodule at hyp,
+            exact ((hyp g) ⟨ hyp'_w,hyp'_h.1⟩ ),},
+        {rw submodule.le_def',intros x,  intro certifa, rw submodule.mem_map, 
+        use (ρ g⁻¹ ) x, split,{exact (hyp g⁻¹ )⟨x,certifa⟩},{erw fact0},}
+    
 end
 theorem pre_mask (hyp : stability.stable_submodule ρ  W) (Hyp : has_projector W) (a : R )  (inv : a * (fintype.card G) = 1 ) : 
 ∃ F : ρ ⟶ ρ,is_projector F.ℓ ∧  linear_map.range (F.ℓ) = W   :=  
 begin 
     rcases Hyp with ⟨p,hyp_p⟩,
     use a • (ℛ ρ ρ  p), 
-    rw homothetic.smul_ext,
+    rw homothetic.smul_ext, --- amélioration de la class homothetic 
     erw reynold_ext,
     apply   @sum_proj R _  M _ _  G _ W a _,
     intros g,
