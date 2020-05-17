@@ -1,0 +1,8 @@
+In this file we define 
+    - representation of a group. 
+    - morphism of representation with module structure and ring structure.
+    - equivalence of representation.
+    - sub_representation.
+    - irreducible representation. 
+    - projector morphism. 
+    - Familly's of projector.
