@@ -1,7 +1,9 @@
 import basic_definitions.group_representation
 import basic_definitions.morphism
 import tactic.apply_fun
+import basic_definitions.sub_module
 import Tools.tools
+set_option pp.generalized_field_notation false
 open_locale big_operators    ----  his there a standart notation ? 
 /-!
 *    Let `ρ and π` two representations on `M` and `M'`. Let `f : M →ₗ[R] M'` a `linear_map`. 
@@ -58,7 +60,7 @@ variables {M : Type w}  [add_comm_group M] [module R M]
           (π : group_representation G R M')
 
 /--
-    We start to define `mixte_conj (f : M→ₗ[R]M')(s : G) : M→ₗ[R] M' := π s⁻¹ * f * ρ s`
+    `mixte_conj π ρ f s  : M→ₗ[R] M' := π s⁻¹ * f * ρ s`
 -/
 def mixte_conj (f : M→ₗ[R]M') : G →   M→ₗ[R] M' := λ s, π s⁻¹  ⊚  f ⊚  ρ s
 
@@ -142,9 +144,47 @@ def Re : (M→ₗ[R]M') →ₗ[R] (ρ ⟶  π) := {
     rw comp_smul,
     exact rfl,
   end }
-#check Re
 lemma reynold_ext'(f : M →ₗ[R]M' ) : (Re ρ π f).ℓ  = ∑ s, mixte_conj ρ π f s  := rfl  
 end Reynold
-namespace more_on_mixte_conj
 open Reynold 
-end more_on_mixte_conj
+variables {M : Type w}  [add_comm_group M] [module R M] (ρ : group_representation G R M)
+
+lemma comp_conjugate (p1 p2  : M→ₗ[R]M ) (g : G) :  (mixte_conj ρ ρ (p1 ) g)  * mixte_conj ρ ρ p2 g =  mixte_conj ρ ρ (p1 * p2) g := 
+begin 
+    rw mixte_conj_ext,
+    change _ ⊚ ( p1 ⊚ (ρ g ⊚  ρ  g ⁻¹) ⊚  p2 ) ⊚  _ = _,
+    rw ← map_comp, rw mul_inv_self, rw ρ.map_one, erw comp_id, exact rfl,
+end 
+/--
+    `is_projector p ` →  `is_projector (mixte_conj ρ ρ p g)`
+-/
+lemma conjugate_projector (p : M→ₗ[R]M )(hyp : is_projector p) (g : G) : is_projector (mixte_conj ρ ρ p g) :=
+begin 
+    unfold is_projector at *,
+    rw comp_conjugate, rw hyp,
+end 
+/--
+    `range (p * ρ g) =   (range p )`
+-/
+lemma pre_compose_range (p : M→ₗ[R]M ) (g : G) : range (p * ρ g) =   (range p ) := 
+begin 
+        apply le_antisymm, 
+        {unfold range, erw  submodule.map_comp, apply submodule.map_mono, exact le_top},
+        rw submodule.le_def', intros x,  intros hyp, rcases hyp with ⟨z,hyp_z ⟩,  use (ρ g⁻¹ ) z, split, 
+        change (ρ g⁻¹ ) z ∈ ⊤ ,
+        trivial, rw ←  hyp_z.2,
+        change  p  (( ρ g ⊚ ρ g⁻¹ ) z ) = p z,
+        rw ← map_comp, rw mul_inv_self, rw ρ.map_one, exact rfl,
+end
+lemma conjugate_range (p : M→ₗ[R]M ) (g : G) : range (mixte_conj ρ ρ p g) = submodule.map (ρ g⁻¹ )  (range p ) := 
+begin 
+    unfold mixte_conj,
+    erw ← submodule.map_comp, erw pre_compose_range, 
+    exact rfl,
+end
+open stability
+lemma conj_mixte_range (p : M→ₗ[R]M )[stable_submodule ρ (range p)] (g : G)  : range (mixte_conj ρ ρ p g) = range p :=
+begin 
+    rw conjugate_range,
+    rw stability.map,
+end

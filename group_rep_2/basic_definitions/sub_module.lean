@@ -37,13 +37,21 @@ def Trivial (ρ : group_representation G R M)(p : submodule R M) [Irreductible �
 
 
 
-
-
-
 variables (ρ : group_representation G R M)
-
 lemma stab [stable_submodule ρ p](g : G) {x : M} :  (x ∈ p )  →   (ρ g x ∈ p) :=  
 stable_submodule.stability g x
+
+lemma map' (g : G) [stable_submodule ρ p] : submodule.map (ρ g) p ≤  p := begin 
+    rw submodule.le_def', intros x hyp, rw submodule.mem_map at hyp, rcases hyp with ⟨y,hyp_y ⟩,
+    rw ←  hyp_y.2, 
+    apply (stab ρ g), exact hyp_y.1, assumption,
+end
+lemma map (g : G) [stable_submodule ρ p] : submodule.map (ρ g) p = p := 
+begin 
+  apply le_antisymm, apply map',
+  rw submodule.le_def', intros x hyp_x, rw submodule.mem_map, use (ρ g⁻¹ ) x,  split, 
+  apply stab ρ g⁻¹, exact hyp_x, assumption, change (ρ g ⊚ ρ g⁻¹ ) x = _, rw ← map_comp, rw mul_inv_self, rw ρ.map_one, exact rfl, 
+end
 
 /--
   Restriction map : `res ρ : G → (p → p)`. 

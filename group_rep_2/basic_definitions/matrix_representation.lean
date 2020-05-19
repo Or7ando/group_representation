@@ -9,12 +9,16 @@ namespace character
 variables {G : Type u} {R : Type v} [group G] [comm_ring R] 
 variables {n : Type w} [fintype n] [decidable_eq n] 
 variables (ρ : group_representation G R (n → R)) 
+
+
 def mat (ρ : group_representation G R (n → R))(g : G) : matrix n n R :=
                  to_matrix (ρ g : (n → R) →ₗ[R] (n→ R)) 
 namespace tools
+/--
+     Ici bof bof je pense ! c'est a refaire completement ! 
+-/
 
-
-@[simp]lemma mat_ext (ρ : group_representation G R (n → R))(g : G) : mat ρ = λ g, to_matrix (ρ g : (n → R) →ₗ[R] (n→ R))  := rfl
+@[simp]lemma mat_ext (ρ : group_representation G R (n → R))(g : G) : mat ρ = λ g, to_matrix (ρ g )  := rfl
 
 @[simp]lemma  mat_mul' (g1 g2 : G) : 
 to_matrix (ρ (g1 * g2)) =  to_matrix (ρ g1 ) *  to_matrix (ρ g2) := 
@@ -23,19 +27,16 @@ begin
 end 
 end tools
 open tools 
-#check  mat ρ 
 def χ  : G →  R :=  λ g, matrix.trace n R R (mat ρ g)
 
 lemma chi_apply (g : G) : χ ρ g = matrix.trace n R R (mat ρ g) := rfl 
 
-lemma chi_ext (g : G) : χ ρ g = ∑ i, (mat ρ g) i i := begin 
-     unfold χ, exact rfl,
-end
+lemma chi_ext (g : G) : χ ρ g = ∑ i, (mat ρ g) i i := rfl
+
 
 @[simp]lemma mat_mul (g1 g2 : G) : mat ρ (g1 * g2)  = mat ρ g1 * mat ρ g2 := 
-begin 
-    exact tools.mat_mul' ρ g1 g2,
-end
+tools.mat_mul' _ _ _
+
 
 @[simp]theorem χ_is_central ( s t : G) : χ ρ (s * t) = χ ρ (t *  s ):= 
 begin 
@@ -51,7 +52,8 @@ end
 @[simp]lemma mat_one : mat ρ 1 = 1 := to_matrix_one' ρ 
 @[simp]lemma mat_mul_inv_self (g : G) : mat ρ g * mat ρ g⁻¹ = 1 := 
 begin rw ← mat_mul,rw mul_inv_self, rw mat_one, end
-@[simp]theorem χ_one : χ ρ 1 =  fintype.card n := begin 
+@[simp]theorem χ_one : χ ρ 1 =  fintype.card n := 
+begin 
      rw chi_apply, rw mat_one, rw trace_one,
 end
 open_locale matrix 

@@ -13,7 +13,7 @@ structure morphism  {G : Type u} [group G] {R : Type v}[ring R]
                     (ρ : group_representation G R M) 
                     (π : group_representation G R M') 
   : Type (max w w') := 
-      (ℓ : M →ₗ[R] M')
+      (ℓ       : M →ₗ[R] M')
       (commute : ∀(g : G), ℓ ⊚   ρ g  = π g  ⊚  ℓ) 
 
 infixr ` ⟶ `:25 := morphism 
@@ -25,11 +25,10 @@ variables {G : Type u} [group G] {R : Type v}[ring R]
           {ρ : group_representation G R M} 
           {ρ' : group_representation G R M'} 
 
-@[ext]lemma ext   ( f g : ρ ⟶ ρ') : 
-(f.ℓ)  = g.ℓ  → f = g := 
+@[ext]lemma ext   ( f g : ρ ⟶ ρ') :  f.ℓ  = g.ℓ  → f = g := 
 begin 
     intros, 
-    cases f,cases g , congr'; try {assumption},
+    cases f,cases g, congr'; try {assumption},
 end
 
 instance : has_coe_to_fun ( ρ ⟶ ρ') := ⟨_,λ f, f.ℓ.to_fun⟩  
@@ -50,12 +49,12 @@ def is_invariant (ρ : group_representation G R M) (ρ' : group_representation G
 
 
 def to_morphism  
-(ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ )  : ρ ⟶ ρ'   := 
-{ ℓ       := ℓ ,
-  commute := λ g, commute g
+(ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ )  : ρ ⟶ ρ'  := { 
+  ℓ       := ℓ ,
+  commute := λ _, commute _
 }
 @[simp] lemma to_morphism_coe 
-(ℓ : M →ₗ[R] M') (commute : ∀(g : G), ℓ ⊚ ρ g   =  ρ'  g  ⊚  ℓ)
+(ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ)
 : (to_morphism ℓ commute).ℓ = ℓ := rfl
 
 @[simp]lemma of_morphism (f : ρ ⟶ ρ'  ) : is_invariant ρ ρ' f.ℓ  := λ g, f.commute g 
@@ -72,6 +71,8 @@ notation `𝟙` := one
 
 instance : inhabited(ρ ⟶ ρ ) := { default := 𝟙 ρ }
 end morphism
+
+
 namespace morphism_module
 open morphism linear_map
 variables {G : Type u} [group G] {R : Type v}[comm_ring R] 
@@ -102,7 +103,7 @@ def add : ρ ⟶  ρ' := {
 instance : has_add (ρ ⟶ ρ') := ⟨add⟩  
 @[simp] lemma add_coe :  (f+h).ℓ = f.ℓ + h.ℓ := rfl
 def neg : ρ ⟶ ρ' := {
-  ℓ := - f.ℓ, 
+  ℓ       := - f.ℓ, 
   commute := 
     begin
        intros g,  ext, change - (f.ℓ  ⊚  ρ g) x = _, erw f.commute,
@@ -131,14 +132,15 @@ def smul (r : R) (f : ρ ⟶ ρ') : ρ ⟶ ρ' := {
   ℓ       := r • f.ℓ ,
   commute :=  
     begin 
-      intros g, ext, change r •( (f.ℓ ⊚  ρ g) x) = ρ' g (r • f.ℓ x), rw f.commute,
-      erw (ρ' g).map_smul, exact rfl,
- end
+      intros g, ext, 
+      change r •( (f.ℓ ⊚  ρ g) x) = ρ' g (r • f.ℓ x), 
+      rw f.commute, erw (ρ' g).map_smul, exact rfl,
+    end
 }
 instance : has_scalar R (ρ ⟶ ρ') := ⟨ smul ⟩ 
 @[simp] lemma coe_smul (r : R):( r • f).ℓ = r • f.ℓ := rfl
 instance : module R (ρ ⟶ ρ') := { smul := smul,
-  one_smul  := begin intros,apply morphism.ext, rw coe_smul, rw one_smul, end,
+  one_smul  := begin intros, apply morphism.ext, rw coe_smul, rw one_smul, end,
   mul_smul  := begin intros, apply morphism.ext, repeat {rw coe_smul}, rw mul_smul,end,
   smul_add  := begin intros, apply morphism.ext, repeat {rw coe_smul, rw add_coe}, rw smul_add, exact rfl,  end,
   smul_zero := begin intros, apply morphism.ext, repeat {rw coe_smul, rw zero_coe}, rw smul_zero,   end,
@@ -183,10 +185,10 @@ instance : ring (ρ ⟶ ρ ) := by refine { add := add,
   mul           := mul,
   mul_assoc     := begin intros, apply morphism.ext, repeat {rw mul_coe}, rw comp_assoc,  end,
   one           := one,
-  one_mul       := begin intros, apply morphism.ext,erw mul_coe, erw one_coe, erw id_comp,   end,
-  mul_one       := begin intros, apply morphism.ext,erw mul_coe, erw one_coe, erw comp_id,   end,
-  left_distrib  := begin intros, apply morphism.ext,repeat {erw mul_coe, erw add_coe}, rw comp_left_distrib, exact rfl,  end,
-  right_distrib := begin intros, apply morphism.ext,erw mul_coe,  end, 
+  one_mul       := begin intros, apply morphism.ext, erw mul_coe, erw one_coe, erw id_comp,   end,
+  mul_one       := begin intros, apply morphism.ext, erw mul_coe, erw one_coe, erw comp_id,   end,
+  left_distrib  := begin intros, apply morphism.ext, repeat {erw mul_coe, erw add_coe}, rw comp_left_distrib, exact rfl,  end,
+  right_distrib := begin intros, apply morphism.ext, erw mul_coe end, 
 }
 
 notation `𝟙` := one

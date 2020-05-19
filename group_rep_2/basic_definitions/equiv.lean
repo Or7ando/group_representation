@@ -10,7 +10,7 @@ variables {G : Type u} [group G] {R : Type v}[ring R]
 
 /--
   an equiv`f : ρ ≃ᵣ π` between representation is a linear equiv `f.ℓ : M(ρ) ≃ₗ[R] M(π)` satisfying 
-    `f.ℓ ∘   ρ g  = π g  ∘   f.ℓ` has function on `set`. 
+    `f.ℓ ∘   ρ g  = π g  ∘   f.ℓ` has function on `linear_map` !  
 -/
 structure G_equiv (ρ : group_representation G R M) (π : group_representation G R M') : Type (max w w') := 
 (ℓ : M ≃ₗ[R] M')

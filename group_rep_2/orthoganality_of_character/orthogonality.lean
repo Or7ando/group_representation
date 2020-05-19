@@ -3,11 +3,13 @@ import data.complex.basic
 import Tools.tools
 import data.matrix.pequiv
 import basic_definitions.matrix_representation
+import permutation_representation.regular_representation
 import Reynold_operator.reynold_scalar_product
 set_option pp.generalized_field_notation false
 open_locale big_operators
 set_option pp.beta true
 universes u v w w'
+
 variables {G : Type u} [group G]  
           {X : Type v} [fintype X][decidable_eq X] 
           {ρ : group_representation G ℂ (X → ℂ)}
@@ -38,7 +40,9 @@ variables [fintype G][decidable_eq G]
 open matrix linear_map character
 open_locale matrix
 
-
+/--
+Le theorem vit sans hypothèse 
+-/
 theorem 𝒪ℛ𝒯ℋ𝒪  (F : not_isomorphic ρ ρ')[Irreductible ρ ][Irreductible ρ'] : 
 scalar_product G ℂ   (χ ρ ) (χ ρ' ) = 0 := 
 begin 
@@ -137,4 +141,22 @@ begin
     let g := 𝒪ℛ𝒯ℋ𝒪 F,
     rw scalar_product_ext at g,
     rw g, erw mul_zero,
+end
+#check Regular.Regular_representation
+/--
+    OKay for other ring than `ℂ` !  
+-/
+theorem scalar_product_with_regular (ρ : group_representation G ℂ (X → ℂ )) : 
+scalar_product G ℂ (χ ρ) (χ (Regular.Regular_representation G ℂ )) =  (χ ρ 1) * (fintype.card G) := 
+begin 
+    rw scalar_product_ext,
+    conv_lhs{
+        apply_congr,skip,
+        rw Regular.character_of_regular_representation, rw mul_ite, rw mul_zero,
+    },
+    rw finset.sum_ite,
+     rw finset.sum_const_zero, rw add_zero,simp,rw finset.sum_filter,
+     rw finset.sum_ite_eq',split_ifs,
+     rw χ_one,
+     let t := (finset.mem_univ (1 : G)),trivial,
 end

@@ -1,5 +1,5 @@
 import data.fintype.basic
-import linear_algebra.basic
+import linear_algebra.basic  
 open_locale big_operators
 notation f ` ⊚ `:80 g:80  := linear_map.comp f g    
 universes  u v w w' w''

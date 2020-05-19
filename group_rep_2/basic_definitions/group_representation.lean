@@ -1,16 +1,22 @@
 /- Copyright (c) 2020 Floris van Doorn. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: ...
+Authors: Orlando Cau
 -/
 import linear_algebra.basic linear_algebra.finite_dimensional    
 import algebra.module  
+/-!
+  We fix a notation composition of linear_map.
+-/
 notation f ` ⊚ `:80 g:80 :=  linear_map.comp f g
+
 universe variables u v w 
    
 open linear_map  
-#check comp_assoc
+
 /-- A representation of a group `G` on an `R`-module `M` is a group homomorphism from `G` to
-  `GL(M)`. -/
+  `GL(M)`. 
+  -/
+
 def group_representation (G R M : Type*) [group G] [ring R] [add_comm_group M] [module R M] :
   Type* :=       G →* M →ₗ[R] M 
 
