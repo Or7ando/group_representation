@@ -1,5 +1,5 @@
 import tactic.push_neg
-import basic_definitions.kernel_range
+import basic_definitions.kernel_range  
 import basic_definitions.equiv
 import basic_definitions.sub_module
 import Reynold_operator.reynold
@@ -15,20 +15,20 @@ variables {M1 : Type w}  [add_comm_group M1] [module R M1]
           {M2 : Type w'} [add_comm_group M2] [module R M2] 
           { ρ1 : group_representation G R M1}
           {ρ2 : group_representation G R M2}
-          (f : ρ1 ⟶ ρ2)
+          (f : ρ1 ⟶ᵣ ρ2)
 
 /--
-    let `f : ρ1 ⟶ ρ2` with `Irreductible ρ1` : `ker f is trivial`. 
+    let `f : ρ1 ⟶ᵣ ρ2` with `Irreductible ρ1` : `ker f is trivial`. 
 -/
 theorem ker_is_trivial  [Irreductible ρ1]  : (is_trivial (ker f.ℓ )) := Trivial ρ1 (ker f.ℓ)   
 
-/--
-    Let `f : ρ1 ⟶ ρ2` with `Irreductible ρ2` then `is_trivial range f` 
+/-- 
+    Let `f : ρ1 ⟶ᵣ ρ2` with `Irreductible ρ2` then `is_trivial range f` 
 -/
 theorem range_is_trivial [Irreductible ρ2]  :  is_trivial (range f.ℓ ) := Trivial ρ2 (range f.ℓ)
 
 /--
-     For  `f : ρ1 ⟶ ρ2`  with  `Irreductible ρ1` and `Irreductible ρ2` 
+     For  `f : ρ1 ⟶ᵣ ρ2`  with  `Irreductible ρ1` and `Irreductible ρ2` 
      if `(∃ x : M1, (f.ℓ  x ≠ 0))` then   `(ker f.ℓ  = ⊥ ) ∧  range f.ℓ  = ⊤` 
      so `f` is an `equivalence`
 -/
@@ -68,7 +68,7 @@ variables  {ρ : group_representation G R M}  {M2 : Type w'} [add_comm_group M2]
 
 
 variables  {ρ' : group_representation G R  M2}
-theorem morphism_are_zero (F : not_isomorphic ρ ρ')[Irreductible ρ ][Irreductible ρ'] : ∀ f : ρ ⟶ ρ', f = 0   
+theorem morphism_are_zero (F : not_isomorphic ρ ρ')[Irreductible ρ ][Irreductible ρ'] : ∀ f : ρ ⟶ᵣ ρ', f = 0   
 := 
 begin 
     by_contradiction,
@@ -101,7 +101,7 @@ open  morphism.from_irreductible equiv_morphism
 open_locale classical
 variables {G : Type u} [group G] {R : Type v}[comm_ring R]{M : Type w}[add_comm_group M] [module R M]
 variables  {ρ : group_representation G R M}
-theorem Schur₂(f : ρ ⟶ ρ) [Irreductible ρ](r : R)(m0 : M) : 
+theorem Schur₂(f : ρ ⟶ᵣ ρ) [Irreductible ρ](r : R)(m0 : M) : 
          (m0 ≠ 0 ∧  f.ℓ m0 + r • m0 = 0) → (∀ m : M, f.ℓ m + r • m = 0) := 
 begin 
     rintros ⟨spec,spectral⟩,
@@ -123,7 +123,7 @@ variables {G : Type u} [group G] {R : Type v}[comm_ring R]{M : Type w}[add_comm_
 variables  {ρ : group_representation G R M}
 open  morphism.from_irreductible
 
-theorem Schur₂1(f : ρ ⟶ ρ) [Irreductible ρ](r : R)(m0 : M) : 
+theorem Schur₂1(f : ρ ⟶ᵣ ρ) [Irreductible ρ](r : R)(m0 : M) : 
          (m0 ≠ 0 ∧  f.ℓ m0 + r • m0 = 0) → (∃ m : M, f.ℓ m + r • m ≠  0) → 0  = 1 := 
 begin 
     rintros ⟨spec,spectral⟩,

@@ -6,7 +6,7 @@ variables {M1 : Type w}  [add_comm_group M1] [module R M1]
           {M2 : Type w'} [add_comm_group M2] [module R M2] 
           {ρ1 : group_representation G R M1} 
           {ρ2  : group_representation G R M2}
-          (f  : ρ1 ⟶  ρ2 )
+          (f  : ρ1 ⟶ᵣ  ρ2 )
 
 open stability morphism linear_map
 namespace Kernel
@@ -21,7 +21,7 @@ stability :=
 } 
 
 /-!
-    The Kernel of `f : ρ1 ⟶ ρ2` has representation.
+    The Kernel of `f : ρ1 ⟶ᵣ ρ2` has representation.
 -/
 
 def ker : group_representation G R (ker f.ℓ) := Res ρ1 
@@ -45,7 +45,7 @@ stability :=
     end
 }
 /--
-  For a morphism `f : ρ1 ⟶ ρ2` between `representation` we define a sub representation of `M2`
+  For a morphism `f : ρ1 ⟶ᵣ ρ2` between `representation` we define a sub representation of `M2`
 -/
 def Range  : group_representation G R (range f.ℓ) := Res ρ2 
 

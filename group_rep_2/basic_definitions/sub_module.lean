@@ -38,19 +38,23 @@ def Trivial (ρ : group_representation G R M)(p : submodule R M) [Irreductible �
 
 
 variables (ρ : group_representation G R M)
+
 lemma stab [stable_submodule ρ p](g : G) {x : M} :  (x ∈ p )  →   (ρ g x ∈ p) :=  
 stable_submodule.stability g x
+
 
 lemma map' (g : G) [stable_submodule ρ p] : submodule.map (ρ g) p ≤  p := begin 
     rw submodule.le_def', intros x hyp, rw submodule.mem_map at hyp, rcases hyp with ⟨y,hyp_y ⟩,
     rw ←  hyp_y.2, 
     apply (stab ρ g), exact hyp_y.1, assumption,
 end
+
 lemma map (g : G) [stable_submodule ρ p] : submodule.map (ρ g) p = p := 
 begin 
   apply le_antisymm, apply map',
   rw submodule.le_def', intros x hyp_x, rw submodule.mem_map, use (ρ g⁻¹ ) x,  split, 
-  apply stab ρ g⁻¹, exact hyp_x, assumption, change (ρ g ⊚ ρ g⁻¹ ) x = _, rw ← map_comp, rw mul_inv_self, rw ρ.map_one, exact rfl, 
+  apply stab ρ g⁻¹, exact hyp_x, assumption, change (ρ g ⊚ ρ g⁻¹ ) x = _, 
+  rw ← map_comp, rw mul_inv_self, rw ρ.map_one, exact rfl, 
 end
 
 /--
@@ -104,12 +108,8 @@ end
    the restriction representation `G →* p ≃ₗ[R]p`
 -/
 def Res  : group_representation G R p := {
-  to_fun := res_linear ρ ,
-  map_one' := 
-    begin 
-      ext,apply submodule_ext, change (ρ 1) x = _,  rw ρ.map_one, 
-      exact rfl,
-    end, 
+  to_fun   := res_linear ρ ,
+  map_one' := begin  ext,apply submodule_ext, change (ρ 1) x = _,  rw ρ.map_one,  exact rfl, end, 
   map_mul' := 
    begin 
     intros g1 g2, 
@@ -118,7 +118,7 @@ def Res  : group_representation G R p := {
     exact rfl,
   end
 }
-def res.subtype  : Res ρ  ⟶ ρ  := { 
+def res.subtype  : Res ρ  ⟶ᵣ ρ  := { 
   ℓ       := submodule.subtype p,
   commute := by {intros g, exact rfl}
 }
