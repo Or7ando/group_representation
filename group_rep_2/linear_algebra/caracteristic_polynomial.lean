@@ -41,10 +41,6 @@ begin
 end
 
 noncomputable def car_pol : polynomial R :=  det (car_matrix M) 
-/-!
-    We admit a theorem 
--/
--- monic_mul  monic_X_add_C
 
 lemma degree_coeff (x  : A) : degree(car_matrix M x x) = 1  := 
 begin 
@@ -73,9 +69,8 @@ end
 lemma degree_le_one (x y : A) : degree(car_matrix M x y) ≤ 1 := 
 begin 
     by_cases x = y,
-        let g := degree_coeff M x, rw ← h, rw g, exact le_refl 1,
-        let g := degree_coeff_ne M h,
-        exact le_trans g (zero_le_one),
+        {let g := degree_coeff M x, rw ← h, rw g, exact le_refl 1},
+        {let g := degree_coeff_ne M h,exact le_trans g (zero_le_one)},
 end
 
 

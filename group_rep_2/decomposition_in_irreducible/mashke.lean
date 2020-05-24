@@ -11,7 +11,7 @@ variables   {G : Type u} [group G][fintype G]
             (W : submodule  R M)
 
 theorem pre_mask (Hyp : has_projector W)  [stable_submodule ρ  W] (a : R )  (inv : a * (fintype.card G) = 1 ) : 
-∃ F : ρ ⟶ ρ,is_projector F.ℓ ∧  linear_map.range (F.ℓ) = W   :=  
+∃ F : ρ ⟶ᵣ ρ,is_projector F.ℓ ∧  linear_map.range (F.ℓ) = W   :=  
 begin 
     rcases Hyp with ⟨p,hyp_p⟩,
     use a • (ℛ ρ ρ  p), 
@@ -22,3 +22,12 @@ begin
     rw ←hyp_p.2 at *,
     apply @conj_mixte_range G _ _ R _ M _ _ ρ p _inst_6,
 end 
+namespace field
+variables    
+            {k : Type v}[comm_ring k]  
+            {V : Type w}[add_comm_group V] [module R V]  
+            (π  : group_representation G R V) 
+            (F : submodule  R V)
+            -- ici juste virer l'hypothèse has_projector ! 
+
+end field 

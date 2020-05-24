@@ -4,7 +4,7 @@ universe variables u v w w' w'' w'''
 
 open linear_map 
 /--
-  a morphism `f : ρ ⟶ π` between representation is a linear map `f.ℓ : M(ρ) →ₗ[R] M(π)` satisfying 
+  a morphism `f : ρ ⟶ᵣ π` between representation is a linear map `f.ℓ : M(ρ) →ₗ[R] M(π)` satisfying 
     `f.ℓ ∘   ρ g  = π g  ∘   f.ℓ` has function on `set`. 
 -/
 structure morphism  {G : Type u} [group G] {R : Type v}[ring R] 
@@ -16,7 +16,7 @@ structure morphism  {G : Type u} [group G] {R : Type v}[ring R]
       (ℓ       : M →ₗ[R] M')
       (commute : ∀(g : G), ℓ ⊚   ρ g  = π g  ⊚  ℓ) 
 
-infixr ` ⟶ `:25 := morphism 
+infixr ` ⟶ᵣ `:25 := morphism 
 
 namespace morphism
 variables {G : Type u} [group G] {R : Type v}[ring R] 
@@ -25,31 +25,31 @@ variables {G : Type u} [group G] {R : Type v}[ring R]
           {ρ : group_representation G R M} 
           {ρ' : group_representation G R M'} 
 
-@[ext]lemma ext   ( f g : ρ ⟶ ρ') :  f.ℓ  = g.ℓ  → f = g := 
+@[ext]lemma ext ( f g : ρ ⟶ᵣ ρ') :  f.ℓ  = g.ℓ  → f = g := 
 begin 
     intros, 
     cases f,cases g, congr'; try {assumption},
 end
 
-instance : has_coe_to_fun ( ρ ⟶ ρ') := ⟨_,λ f, f.ℓ.to_fun⟩  
+instance : has_coe_to_fun ( ρ ⟶ᵣ ρ') := ⟨_,λ f, f.ℓ.to_fun⟩  
 
-lemma coersion (f : ρ ⟶ ρ') : ⇑f = (f.ℓ) := rfl
+lemma coersion (f : ρ ⟶ᵣ ρ') : ⇑f = (f.ℓ) := rfl
 
-theorem commute_apply ( f : ρ ⟶  ρ') (x : M) (g : G) : f ( ρ g x) = ρ' g (f x ) := 
+theorem commute_apply ( f : ρ ⟶ᵣ  ρ') (x : M) (g : G) : f ( ρ g x) = ρ' g (f x ) := 
 begin 
       change (f.ℓ  ⊚  ρ g ) x = _,
       rw f.commute, exact rfl,
 end
 
-/--
-  a constructor of morphism 
--/
+
 def is_invariant (ρ : group_representation G R M) (ρ' : group_representation G R M') 
  (ℓ : M →ₗ[R] M') := ∀(g : G), ℓ ⊚ ρ g   =  ρ' g   ⊚  ℓ
 
-
+/--
+  a constructor of morphism 
+-/
 def to_morphism  
-(ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ )  : ρ ⟶ ρ'  := { 
+(ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ )  : ρ ⟶ᵣ ρ'  := { 
   ℓ       := ℓ ,
   commute := λ _, commute _
 }
@@ -57,19 +57,19 @@ def to_morphism
 (ℓ : M →ₗ[R] M') (commute : is_invariant ρ ρ' ℓ)
 : (to_morphism ℓ commute).ℓ = ℓ := rfl
 
-@[simp]lemma of_morphism (f : ρ ⟶ ρ'  ) : is_invariant ρ ρ' f.ℓ  := λ g, f.commute g 
+@[simp]lemma of_morphism (f : ρ ⟶ᵣ ρ'  ) : is_invariant ρ ρ' f.ℓ  := λ g, f.commute g 
 
 /--
   The identity morphism 
 -/
-def one (ρ : group_representation G R M) : ρ ⟶ ρ := 
+def one (ρ : group_representation G R M) : ρ ⟶ᵣ ρ := 
 { ℓ         := linear_map.id,
   commute   := λ g, rfl
 }
 
 notation `𝟙` := one
 
-instance : inhabited(ρ ⟶ ρ ) := { default := 𝟙 ρ }
+instance : inhabited(ρ ⟶ᵣ ρ ) := { default := 𝟙 ρ }
 end morphism
 
 
@@ -90,9 +90,9 @@ begin
     intros,ext,erw map_smul, exact rfl,
 end
 variables (r : R)
-variables (f h : ρ ⟶ ρ')
+variables (f h : ρ ⟶ᵣ ρ')
 
-def add : ρ ⟶  ρ' := { 
+def add : ρ ⟶ᵣ  ρ' := { 
   ℓ       := f.ℓ + h.ℓ ,
   commute := 
     begin  
@@ -100,9 +100,9 @@ def add : ρ ⟶  ρ' := {
        ext, exact rfl,
     end 
   }
-instance : has_add (ρ ⟶ ρ') := ⟨add⟩  
+instance : has_add (ρ ⟶ᵣ ρ') := ⟨add⟩  
 @[simp] lemma add_coe :  (f+h).ℓ = f.ℓ + h.ℓ := rfl
-def neg : ρ ⟶ ρ' := {
+def neg : ρ ⟶ᵣ ρ' := {
   ℓ       := - f.ℓ, 
   commute := 
     begin
@@ -111,13 +111,13 @@ def neg : ρ ⟶ ρ' := {
        erw (ρ' g).map_neg,   exact rfl,
     end
   }
-instance : has_neg(ρ ⟶ ρ') := ⟨neg⟩
+instance : has_neg(ρ ⟶ᵣ ρ') := ⟨neg⟩
 @[simp] lemma neg_coe :  (-f).ℓ = -f.ℓ := rfl
-def zero : ρ ⟶ ρ' := { ℓ := 0, commute := begin intros g,  ext, simp,end}
-instance : has_zero (ρ ⟶ ρ') := ⟨zero⟩   
-@[simp] lemma zero_coe :  (0 : ρ ⟶ ρ').ℓ = 0 := rfl
+def zero : ρ ⟶ᵣ ρ' := { ℓ := 0, commute := begin intros g,  ext, simp,end}
+instance : has_zero (ρ ⟶ᵣ ρ') := ⟨zero⟩   
+@[simp] lemma zero_coe :  (0 : ρ ⟶ᵣ ρ').ℓ = 0 := rfl
 
-instance : add_comm_group (ρ ⟶ ρ') := { 
+instance : add_comm_group (ρ ⟶ᵣ ρ') := { 
   add           := add   ,
   add_assoc     := begin  intros, apply morphism.ext, repeat {rw add_coe}, rw add_assoc, end,
   zero          := 0,
@@ -128,7 +128,7 @@ instance : add_comm_group (ρ ⟶ ρ') := {
   add_comm      := begin intros,apply morphism.ext, erw add_coe, rw add_comm, exact rfl,end, 
 }
 
-def smul (r : R) (f : ρ ⟶ ρ') : ρ ⟶ ρ' := { 
+def smul (r : R) (f : ρ ⟶ᵣ ρ') : ρ ⟶ᵣ ρ' := { 
   ℓ       := r • f.ℓ ,
   commute :=  
     begin 
@@ -137,9 +137,9 @@ def smul (r : R) (f : ρ ⟶ ρ') : ρ ⟶ ρ' := {
       rw f.commute, erw (ρ' g).map_smul, exact rfl,
     end
 }
-instance : has_scalar R (ρ ⟶ ρ') := ⟨ smul ⟩ 
+instance : has_scalar R (ρ ⟶ᵣ ρ') := ⟨ smul ⟩ 
 @[simp] lemma coe_smul (r : R):( r • f).ℓ = r • f.ℓ := rfl
-instance : module R (ρ ⟶ ρ') := { smul := smul,
+instance : module R (ρ ⟶ᵣ ρ') := { smul := smul,
   one_smul  := begin intros, apply morphism.ext, rw coe_smul, rw one_smul, end,
   mul_smul  := begin intros, apply morphism.ext, repeat {rw coe_smul}, rw mul_smul,end,
   smul_add  := begin intros, apply morphism.ext, repeat {rw coe_smul, rw add_coe}, rw smul_add, exact rfl,  end,
@@ -147,8 +147,8 @@ instance : module R (ρ ⟶ ρ') := { smul := smul,
   add_smul  := begin intros, apply morphism.ext, repeat {rw coe_smul, rw add_coe}, rw add_smul,exact rfl,  end,
   zero_smul := begin intros, apply morphism.ext, repeat {rw coe_smul, rw zero_coe}, rw zero_smul,   end }
 
-#check @morphism.ℓ  G _ R _ M _ _ M' _ _ ρ ρ' 
-instance : is_add_monoid_hom (@morphism.ℓ  G _ R _ M _ _ M' _ _ ρ ρ' ) := { map_add := add_coe,
+instance : is_add_monoid_hom (@morphism.ℓ  G _ R _ M _ _ M' _ _ ρ ρ' ) := { 
+  map_add  := add_coe,
   map_zero := zero_coe }
 end morphism_module
 
@@ -156,12 +156,12 @@ namespace Ring
 variables {G : Type u}[group G]   {R : Type v}[comm_ring R] {M : Type w} 
           [add_comm_group M] [module R M]  
           {ρ : group_representation G R M}
-          (f h : ρ ⟶ ρ )
+          (f h : ρ ⟶ᵣ ρ )
 open morphism morphism_module
 /-
   Make an R algebra ? subalgebra of sub.type ! To check 
 -/
-def mul : ρ ⟶  ρ := {
+def mul : ρ ⟶ᵣ  ρ := {
   ℓ       := f.ℓ ⊚  h.ℓ ,
   commute := 
     begin  
@@ -169,12 +169,12 @@ def mul : ρ ⟶  ρ := {
       rw [comp_assoc, h.commute,  ← comp_assoc,  f.commute,  comp_assoc],
     end 
 }
-instance : has_mul (ρ ⟶ ρ ) := ⟨mul ⟩ 
+instance : has_mul (ρ ⟶ᵣ ρ ) := ⟨mul ⟩ 
 @[simp] lemma mul_coe : ( f * h).ℓ = f.ℓ ⊚  h.ℓ  := rfl 
-def one : ρ ⟶ ρ := { ℓ := 1, commute := begin intros g,  ext, simp,end}
-instance : has_one (ρ ⟶ ρ) := ⟨one⟩   
-@[simp] lemma one_coe :  (1 : ρ ⟶ ρ).ℓ = 1 := rfl
-instance : ring (ρ ⟶ ρ ) := by refine { add := add,
+def one : ρ ⟶ᵣ ρ := { ℓ := 1, commute := begin intros g,  ext, simp,end}
+instance : has_one (ρ ⟶ᵣ ρ) := ⟨one⟩   
+@[simp] lemma one_coe :  (1 : ρ ⟶ᵣ ρ).ℓ = 1 := rfl
+instance : ring (ρ ⟶ᵣ ρ ) := by refine { add := add,
   add_assoc     := add_assoc,
   zero          := zero,
   zero_add      := zero_add,
@@ -198,19 +198,19 @@ namespace illustration
 variables {G : Type u}[group G]   {R : Type v}[comm_ring R] {M : Type w} 
           [add_comm_group M] [module R M]  
           {ρ : group_representation G R M}
-          (f g : ρ ⟶ ρ ) (r : R)
+          (f g : ρ ⟶ᵣ ρ ) (r : R)
 example :  f + g  = g + f := add_comm f g 
 
 example : (f + g).ℓ = f.ℓ + g.ℓ := by simp 
 open_locale big_operators
 -- il nous faut une instance
 
-lemma sum_coe (X : Type)[fintype X][decidable_eq X] (φ : X → (ρ ⟶ ρ)) :   (∑ x, φ x).ℓ  =  (∑ x, (φ x).ℓ ) :=
+lemma sum_coe (X : Type)[fintype X][decidable_eq X] (φ : X → (ρ ⟶ᵣ ρ)) :   (∑ x, φ x).ℓ  =  (∑ x, (φ x).ℓ ) :=
 begin 
   rw @finset.sum_hom _ _ _ _ _ (finset.univ) φ morphism.ℓ  _ , --- ici c'est moyen car faut vraiment preciser l'instance !
 end
 
-lemma sum_apply (X : Type)[fintype X][decidable_eq X] (φ : X → (ρ ⟶ ρ)) (m : M) :  (∑ x, φ x).ℓ   m =  ∑ x, (φ x).ℓ   m := 
+lemma sum_apply (X : Type)[fintype X][decidable_eq X] (φ : X → (ρ ⟶ᵣ ρ)) (m : M) :  (∑ x, φ x).ℓ   m =  ∑ x, (φ x).ℓ   m := 
 begin 
   erw ← sum_apply,
   rw sum_coe,
@@ -222,7 +222,7 @@ open Ring
 variables {G : Type u}[group G]   {R : Type v}[comm_ring R] {M : Type w} 
           [add_comm_group M] [module R M]  
           {ρ : group_representation G R M}
-          (f  : ρ ⟶ ρ ) (r : R)
+          (f  : ρ ⟶ᵣ ρ ) (r : R)
 
 /--
   I don't know if it s a good definition. 
@@ -241,10 +241,10 @@ begin
   apply morphism.ext, rw mul_coe, exact a,
 end   
 
-instance is_projector_zero : is_projector (0 : ρ ⟶ ρ )   := (idem 0).mpr $ zero_mul _
-instance is_projector_one  : is_projector (1 : ρ ⟶ ρ )   := (idem 1).mpr $ one_mul _ 
+instance is_projector_zero : is_projector (0 : ρ ⟶ᵣ ρ )   := (idem 0).mpr $ zero_mul _
+instance is_projector_one  : is_projector (1 : ρ ⟶ᵣ ρ )   := (idem 1).mpr $ one_mul _ 
 
-def irreductible :=  ∀ f : ρ ⟶ ρ , (is_projector f ↔ (f = 0 ∨ f = 1))
+def irreductible :=  ∀ f : ρ ⟶ᵣ ρ , (is_projector f ↔ (f = 0 ∨ f = 1))
 
 end Projector 
 

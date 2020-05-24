@@ -15,7 +15,7 @@ open_locale big_operators
     We start by explaining the strategy.
     Let :  
     `(s : finset A)(φ :A → polynomial R)(a : A)`
-    `(hyp : ∀ b : A, a ≠ b →  degree (φ b) < degree (φ a) )`
+    `(hyp : ∀ b : A, a ≠ b →  degree (φ b) < degree (φ a) )`+
     `(hyp_not_nul : ⊥  < degree (φ a))`:        
     Then 
     `if a ∈ s then (degree (∑ x in s, φ x ) =  degree (φ a))`
@@ -351,103 +351,7 @@ begin
      rw ← add_zero (1) at a_1,
     let j := nat.lt_one_add_iff.mp a_1,finish,
 end 
-#check nat
-theorem jenesaispas (s : finset A) (φ : A → (with_bot ℕ) )  
-(hyp : ∀ ℓ : A, φ ℓ ≤ 1) : 
- ∑ x in s, φ x = card s → (∀ ℓ : A, ℓ ∈ s → φ ℓ = 1) := 
- begin 
-    apply (finset.induction_on s), {
-        rw sum_empty, intros, let g := not_mem_empty ℓ , trivial,
-    },
-    {   
-        intros ℓ s hyp_l hyp_rec,intros,
-        
-        by_cases ℓ_1 = ℓ,{ let h' := h,
-            by_cases (∑ x in s, φ x = ↑(card s)),{
-                rw [sum_insert(by assumption),card_insert_of_not_mem(by assumption), coe_add] at a,
-            intros,rw h',
-                rw h at a, rw add_comm at a, refine left_cancel (card s) a ,
-            },
-            let pre_strat := q_card_insert_eq_card s φ hyp ℓ hyp_l a,trivial,
-            },
-        {
-            let  p := mem_of_mem_insert_of_ne a_1 h,
-            let pre_strat := q_card_insert_eq_card s φ hyp ℓ hyp_l a,
-            specialize hyp_rec pre_strat, exact hyp_rec ℓ_1 p,
-        },
-    },
- end
 
-
-
-
-
-theorem det_card_term_'11 ( s: finset A) (φ : A → polynomial R)
-(hyp : ∀ ℓ : A, degree(φ ℓ ) ≤ (1 : with_bot ℕ  ))  :
-    degree (finset.prod s  (λ x :A, φ x)) =  card s → (∀ ℓ : A, ℓ ∈ s → degree (φ ℓ ) = 1)  :=
-begin 
-    let je := jenesaispas s (λ x, degree (φ x)) hyp,
-    intros,
-    have rr :  finset.sum s (λ x, degree (φ x))  = card s,
-        apply le_antisymm,{
-            apply sum_le s , exact hyp, 
-        },
-        {
-            rw ← a,      
-            exact degree_prod_le_sum_degree s φ,
-        },
-    exact je rr ℓ  a_1,
- end
-
-/--
-   For   polynomials `φ : A → polynomial R`
-    ` ∃  ℓ0 : A, degree (φ ℓ0) < 1)`
-    
-    degree (finset.prod finset.univ  (λ x :A, φ x)) <  fintype.card A 
--/
-theorem degree_prod_le_one_lt_cardf (φ : A → polynomial R)
-(hyp : ∀ ℓ : A, degree(φ ℓ ) ≤ 1 ) 
-(hyp_lc : ∃  ℓ0 : A, degree (φ ℓ0) < 1) :
-    
-    degree (finset.prod finset.univ  (λ x :A, φ x)) <  fintype.card A := 
-begin 
-    by_contradiction contra, push_neg at contra,
-    let g := det_card_term_'11 (finset.univ) φ hyp,
-    have : ↑(fintype.card A) = degree (finset.prod univ (λ (x : A), φ x)),
-        apply le_antisymm (by assumption),
-            apply le_trans (degree_prod_le_sum_degree (finset.univ) φ),
-            apply sum_le ,
-            exact hyp,
-        rcases hyp_lc with ⟨ ζ, j⟩, 
-        specialize g (eq.symm this) ζ (mem_univ _),
-        rw g at j,exact lt_irrefl 1 j,
-end
-
-lemma ter ( b : ℕ ) (c d : with_bot ℕ) (hyp : c < d) : c +b < d + b := 
-begin
-    cases c,
-    erw bot_add,cases d, let h :=  lt_irrefl none,trivial,
-    apply bot_lt_some,
-    erw ← coe_add, cases d, let h := bot_lt_some c, let g := lt_asymm hyp,trivial,
-    erw ← coe_add,
-    erw some_lt_some,
-    apply (add_lt_add_iff_right b).mpr,
-    erw some_lt_some at hyp, assumption,
-end 
-
-lemma  ter' ( γ   : ℕ ) (α  β : with_bot ℕ) (hyp : α  < 1)(hyp' :  β  ≤  γ ) :  α  + β  < 1 + γ  := 
-begin 
-    cases α, 
-    {erw bot_add,erw ← coe_add, exact bot_lt_some _,},
-    cases β,
-    erw add_bot,  erw ← coe_add, exact bot_lt_some _,
-    erw ← coe_add,erw ←  coe_add, 
-    erw  coe_lt_coe,
-    apply add_lt_add_of_lt_of_le,
-    erw ←  coe_lt_coe,
-    assumption,
-    erw ← coe_le_coe,assumption,
-end
 
 lemma  add_lt_add_of_lt_of_le ( γ   : ℕ ) (α β θ  : with_bot ℕ) (hyp : α  < θ )(hyp' :  β  ≤  γ ) :  α  + β  < θ  + γ  := 
 begin 
@@ -462,12 +366,17 @@ begin
                 {
                     erw ← coe_add,erw ←  coe_add, erw  coe_lt_coe,
                     apply add_lt_add_of_lt_of_le,
-                        {erw ←  coe_lt_coe,assumption},
-                        {erw ← coe_le_coe,assumption}
+                        {exact  coe_lt_coe.mp hyp},
+                        {exact coe_le_coe.mp hyp'}
                 },
 end
 
-
+/--
+   For   polynomials `φ : A → polynomial R`
+    ` ∃  ℓ0 : A, degree (φ ℓ0) < 1)`
+    
+    degree (finset.prod finset.univ  (λ x :A, φ x)) <  fintype.card A 
+-/
 theorem degree_prod_le_one_lt_card (φ : A → polynomial R)
 (hyp : ∀ ℓ : A, degree(φ ℓ ) ≤ 1 ) 
 (hyp_lt_one : ∃  ℓ0 : A, degree (φ ℓ0) < 1) : degree ( ∏ ℓ :  A, φ ℓ ) < fintype.card A :=

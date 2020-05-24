@@ -30,15 +30,32 @@ variables (ρ : group_representation G R M)
 
 
 @[simp]lemma map_comp (s t : G) : ρ (s * t) = ρ s ⊚ ρ t :=  ρ.map_mul _ _ 
-/-!
-@[simp] lemma rho_symm_apply (x : M)(g : G) : ρ g ((ρ g).symm x) = x := by simp
 
-@[simp] lemma symm_eq_inv (ρ : group_representation G R M) (g : G) : ρ g⁻¹ = (ρ g).symm :=
+def gr.to_equiv' (g : G) :  M ≃ₗ[R] M := { to_fun := ρ g,
+  add := (ρ g).map_add ,
+  smul := (ρ g).map_smul,
+  inv_fun := (ρ g⁻¹ ),
+  left_inv := begin intro, change (ρ g⁻¹ ⊚ ρ g) x = _, erw ←  map_comp, rw inv_mul_self, erw ρ.map_one, exact rfl end, 
+  right_inv :=  begin intro, change (ρ g ⊚ ρ g⁻¹ ) x = _, erw ←  map_comp, rw mul_inv_self, erw ρ.map_one, exact rfl end, }
+
+lemma gr.to_equiv : G →* M ≃ₗ[R] M := { to_fun := gr.to_equiv' ρ  ,
+  map_one' := begin
+      unfold gr.to_equiv', congr,erw ρ.map_one, exact rfl, rw one_inv, rw ρ.map_one,  exact rfl,
+   end,
+  map_mul' := begin
+    intros, unfold gr.to_equiv', congr, rw map_comp, exact rfl,
+    rw mul_inv_rev, rw map_comp, exact rfl,
+   end } 
+
+@[simp] lemma rho_symm_apply (x : M)(g : G) : ρ g ((gr.to_equiv ρ g).inv_fun x) = x := begin 
+  dunfold gr.to_equiv, change (ρ g ⊚ ρ g⁻¹) x = x, rw ← map_comp, rw mul_inv_self, rw ρ.map_one, exact rfl,
+end
+
+@[simp] lemma symm_eq_inv (ρ : group_representation G R M) (g : G) : ρ g⁻¹ = (gr.to_equiv ρ g).symm :=
 begin 
   ext, conv_lhs{
     erw ← rho_symm_apply ρ x g,
   },
   change (ρ g⁻¹ * ρ g) _ = _,
-  erw ← ρ.map_mul, rw inv_mul_self, rw ρ.map_one,  exact rfl,
+  erw ← ρ.map_mul, rw inv_mul_self, rw ρ.map_one, exact rfl, 
 end 
--/

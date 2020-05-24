@@ -7,7 +7,7 @@ set_option pp.generalized_field_notation false
 open_locale big_operators    ----  his there a standart notation ? 
 /-!
 *    Let `ρ and π` two representations on `M` and `M'`. Let `f : M →ₗ[R] M'` a `linear_map`. 
-*    Let  `ℒ f := Σ_{g ∈ G} π g⁻¹ ∘ f ∘ ρ  g`,   then  `ℒ f` is a morphism `ρ ⟶ π`. 
+*    Let  `ℒ f := Σ_{g ∈ G} π g⁻¹ ∘ f ∘ ρ  g`,   then  `ℒ f` is a morphism `ρ ⟶ᵣ π`. 
 *    Proof :  `∀ t ∈ G,  ρ t ∘ ℒ f ∘ π t⁻¹  := ∑ ρ t g⁻¹  ∘ f ∘ π g t  = ∑  t'⁻¹  ∘  f ∘ π t'`    
 
 #    We start to define sum operator on `M →ₗ[R] M'`  
@@ -107,27 +107,27 @@ end
     The Reynold opérator.  
 -/
 
-
-def ℛ : (M→ₗ[R]M') → (ρ ⟶  π) := λ f, to_morphism (ℒ ρ π f) (L_is_morphism ρ π f )
+def ℛ : (M→ₗ[R]M') → (ρ ⟶ᵣ  π) := λ f, to_morphism (ℒ ρ π f) (L_is_morphism ρ π f )
 
 lemma reynold_ext(f : M →ₗ[R]M' ) : (ℛ ρ π f).ℓ = ∑ s, mixte_conj ρ π f s := rfl  
 #check ℛ ρ ρ 
 /-!
     THE Reynold opérator is linear ! 
-        note the structure of module of ρ ⟶ ρ' is define in the file 
+        note the structure of module of ρ ⟶ᵣ ρ' is define in the file 
         `basic_definition.morphism_module`
 
     Remarque je n'ai toujours pas inversé le cardinal de G pour des raisons de confort ! 
 -/
 variables {M'' : Type w''} [add_comm_group M''] [module R M'']
-lemma comp_left_distrib (a : M' →ₗ[R]M'')(b c : M →ₗ[R]M') : a ⊚ (b + c) = a ⊚ b + a ⊚ c := begin 
+lemma comp_left_distrib (a : M' →ₗ[R]M'')(b c : M →ₗ[R]M') : a ⊚ (b + c) = a ⊚ b + a ⊚ c :=
+begin 
     intros, ext x, erw map_add, exact rfl,
 end
 lemma comp_smul (r : R) (a : M' →ₗ[R]M'')(b  : M →ₗ[R]M') : a ⊚  (r • b) = r • (a ⊚ b) := 
 begin 
     intros,ext,erw map_smul, exact rfl,
 end
-def Re : (M→ₗ[R]M') →ₗ[R] (ρ ⟶  π) := { 
+def Re : (M→ₗ[R]M') →ₗ[R] (ρ ⟶ᵣ  π) := { 
     to_fun := ℛ ρ π ,
     add := 
     begin
@@ -144,7 +144,7 @@ def Re : (M→ₗ[R]M') →ₗ[R] (ρ ⟶  π) := {
     rw comp_smul,
     exact rfl,
   end }
-lemma reynold_ext'(f : M →ₗ[R]M' ) : (Re ρ π f).ℓ  = ∑ s, mixte_conj ρ π f s  := rfl  
+lemma reynold_ext'(f : M →ₗ[R]M' ) : (Re ρ π f).ℓ  = ∑ s, mixte_conj ρ π f s  := rfl 
 end Reynold
 open Reynold 
 variables {M : Type w}  [add_comm_group M] [module R M] (ρ : group_representation G R M)

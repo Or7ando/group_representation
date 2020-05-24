@@ -68,9 +68,10 @@ begin
         rw mul_inv_self, rw character.mat_one,
         rw one_mul,
 end
+open equiv_morphism
+variables  {Y : Type w}[fintype Y][decidable_eq Y] variables (ρ' : group_representation G R (Y → R))
 end character 
 
-/-
 namespace equivalence
 open character
 variables {G : Type u} {R : Type v} [group G] [comm_ring R] 
@@ -79,14 +80,6 @@ variables  {Y : Type w}[fintype Y][decidable_eq Y]
 variables (ρ : group_representation G R (X → R))  
 variables (ρ' : group_representation G R (Y → R))  
 variables (φ : ρ  ≃ᵣ ρ' )
-/-!
-     Retravailler equiv pour obtenir un bonne forme 
--/
-#check φ.ℓ 
-example (g : G) : ρ g⁻¹ = (ρ g) ⁻¹ := begin 
-    rw ρ.map_inv,
-end
-
 
 #check φ.ℓ.6
 /-!
@@ -97,10 +90,8 @@ end
  ⊚   (ρ' g : (Y → R) →ₗ[R] (Y → R) ) ⊚ 
      (φ.ℓ : (X → R) →ₗ[R] (Y → R)) = (ρ g : (X → R) →ₗ[R] (X → R)) := 
 begin
-     apply linear_map.ext, intros x,
-     change (linear_equiv.symm φ.ℓ  ∘  (ρ' g) ∘  φ.ℓ) x = _ ,
-     rw ← φ.commute,
-     simp [φ.ℓ.5], 
+     rw linear_map.comp_assoc,
+     rw ← φ.commute,  rw ← linear_map.comp_assoc, ext,simp [φ.ℓ.5],
 end
 /--
      Ceci doit aller dans équiv ! 
@@ -113,7 +104,6 @@ lemma mul_inv_self :  (φ.ℓ : (X → R) →ₗ[R] Y → R) ⊚  (φ.ℓ.symm :
 begin 
      ext,simp,
 end  
-open tools
 lemma trace_ext (M : matrix Y Y R) : matrix.trace Y  R R M = ∑ i : Y, M i i := rfl
 /--
      IL faut absolument refaire des fonctions du côté matrix !!! 
@@ -130,5 +120,20 @@ begin
      rw ← linear_map.comp_assoc,  rw mul_inv_self,
      erw linear_map.id_comp, rw  chi_apply, exact rfl,
 end 
+open equiv_morphism
+--open_locale classical
+theorem carac_eq' (hyp : is_isomorphic  ρ  ρ' ) : χ ρ  = χ ρ'  := 
+begin
+     funext g,
+     rw chi_ext, unfold is_isomorphic at hyp,
+     rcases hyp with φ, 
+     rw tools.mat_ext, swap, by assumption,
+     conv_lhs{
+          apply_congr, skip,
+          dsimp,erw ← conjugaison ρ ρ' φ,
+     },
+     erw ← trace_ext, erw to_matrix_trace_comm, 
+     rw ← linear_map.comp_assoc,  rw mul_inv_self,
+     erw linear_map.id_comp, rw  chi_apply, exact rfl,
+end 
 end equivalence
---/ 
